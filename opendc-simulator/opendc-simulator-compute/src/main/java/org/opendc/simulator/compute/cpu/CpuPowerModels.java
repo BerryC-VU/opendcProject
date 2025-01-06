@@ -23,6 +23,8 @@
 package org.opendc.simulator.compute.cpu;
 
 import java.util.Arrays;
+import org.opendc.simulator.compute.energy.Battery;
+import org.opendc.simulator.compute.energy.PowerManager;
 
 /**
  * A collection {@link CpuPowerModel} implementations.
@@ -37,6 +39,22 @@ public class CpuPowerModels {
      */
     public static CpuPowerModel constant(double power) {
         return new ConstantPowerModel(power);
+    }
+
+    public static CpuPowerModel withBattery(double maxPower, double idlePower, Battery battery, PowerManager powerManager) {
+        return new CpuPowerModel() {
+            @Override
+            public double computePower(double utilization) {
+                double demand = idlePower + (maxPower - idlePower) * utilization;
+                var powerResult = powerManager.supplyPower(demand);
+                return powerResult.getFirst() + powerResult.getSecond() + powerResult.getThird();
+            }
+
+            @Override
+            public String getName() {
+                return "BatteryPoweredModel";
+            }
+        };
     }
 
     /**
