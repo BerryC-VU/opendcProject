@@ -22,8 +22,16 @@
 
 package org.opendc.simulator.compute.power;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import kotlin.Triple;
 import org.opendc.simulator.compute.cpu.SimCpu;
+import org.opendc.simulator.compute.energy.Battery;
+import org.opendc.simulator.compute.energy.EnergyModel;
+import org.opendc.simulator.compute.energy.EnergyUtils;
+import org.opendc.simulator.compute.energy.PowerManager;
+import org.opendc.simulator.compute.energy.PowerManagerSingleSupplier;
 import org.opendc.simulator.engine.graph.FlowEdge;
 import org.opendc.simulator.engine.graph.FlowGraph;
 import org.opendc.simulator.engine.graph.FlowNode;
@@ -38,14 +46,24 @@ public final class SimPowerSource extends FlowNode implements FlowSupplier {
     private double powerDemand = 0.0f;
     private double powerSupplied = 0.0f;
     private double totalEnergyUsage = 0.0f;
+    private double totalCleanEnergyUsage = 0.0f;
+    private double totalNonCleanEnergyUsage = 0.0f;
+    private double totalBatteryEnergyUsage = 0.0f;
 
     private double carbonIntensity = 0.0f;
     private double totalCarbonEmission = 0.0f;
 
     private CarbonModel carbonModel = null;
     private FlowEdge muxEdge;
+    private final Battery battery;
+    private final EnergyModel energyModel;
+    private final PowerManager powerManager;
+    private final PowerManagerSingleSupplier powerManagerSingleSupplier;
+
+    private int powerPolicy = 0;
 
     private double capacity = Long.MAX_VALUE;
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Basic Getters and Setters
@@ -87,6 +105,18 @@ public final class SimPowerSource extends FlowNode implements FlowSupplier {
         return totalEnergyUsage;
     }
 
+    public double getTotalBatteryEnergyUsage() {
+        return totalBatteryEnergyUsage;
+    }
+
+    public double getTotalCleanEnergyUsage() {
+        return totalCleanEnergyUsage;
+    }
+
+    public double getTotalNonCleanEnergyUsage() {
+        return totalNonCleanEnergyUsage;
+    }
+
     public double getCarbonEmission() {
         return this.totalCarbonEmission;
     }
@@ -109,6 +139,13 @@ public final class SimPowerSource extends FlowNode implements FlowSupplier {
             this.carbonModel = new CarbonModel(graph, this, carbonFragments, startTime);
         }
         lastUpdate = this.clock.millis();
+
+        ArrayList<Double> greenEnergyProfile = EnergyUtils.generateGreenEnergyProfile(1000, 5000.0);
+
+        this.battery = new Battery(50000.0,0.9, 10000.0);
+        this.energyModel = new EnergyModel(greenEnergyProfile, 1000);
+        this.powerManager = new PowerManager(energyModel, battery);
+        this.powerManagerSingleSupplier = new PowerManagerSingleSupplier(energyModel, battery);
     }
 
     public void close() {
@@ -134,6 +171,18 @@ public final class SimPowerSource extends FlowNode implements FlowSupplier {
         updateCounters(clock.millis());
     }
 
+    private Triple<Double, Double, Double> energySupply(double energyUsage) {
+        Triple<Double, Double, Double> result;
+        if (powerPolicy == -1) {
+            result = new Triple<>(0., energyUsage, 0.);
+        } else if (powerPolicy == 0) {
+            result = powerManager.supplyPower(energyUsage);
+        } else {
+            result = powerManagerSingleSupplier.supplyPower(energyUsage);
+        }
+        return result;
+    }
+
     /**
      * Calculate the energy usage up until <code>now</code>.
      */
@@ -144,10 +193,16 @@ public final class SimPowerSource extends FlowNode implements FlowSupplier {
         long duration = now - lastUpdate;
         if (duration > 0) {
             double energyUsage = (this.powerSupplied * duration * 0.001);
-
+            Triple<Double, Double, Double> batterySupply = energySupply(energyUsage);
+            double cleanEnergy = batterySupply.getFirst();
+            double nonCleanEnergyUsage = batterySupply.getSecond();
+            double batteryEnergyUsage = batterySupply.getThird();
             // Compute the energy usage of the machine
             this.totalEnergyUsage += energyUsage;
-            this.totalCarbonEmission += this.carbonIntensity * (energyUsage / 3600000.0);
+            this.totalCleanEnergyUsage += cleanEnergy;
+            this.totalNonCleanEnergyUsage += nonCleanEnergyUsage;
+            this.totalBatteryEnergyUsage += batteryEnergyUsage;
+            this.totalCarbonEmission += this.carbonIntensity * (nonCleanEnergyUsage / 3600000.0);
         }
     }
 

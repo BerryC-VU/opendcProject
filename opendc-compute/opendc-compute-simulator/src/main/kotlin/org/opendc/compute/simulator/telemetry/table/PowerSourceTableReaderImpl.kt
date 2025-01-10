@@ -52,6 +52,9 @@ public class PowerSourceTableReaderImpl(
         _energyUsage = table.energyUsage
         _carbonIntensity = table.carbonIntensity
         _carbonEmission = table.carbonEmission
+        _cleanEnergyUsage = table.cleanEnergyUsage
+        _nonCleanEnergyUsage = table.nonCleanEnergyUsage
+        _batteryEnergyUsage = table.batteryEnergyUsage
     }
 
     private val powerSource = powerSource
@@ -85,6 +88,9 @@ public class PowerSourceTableReaderImpl(
         get() = _carbonEmission - previousCarbonEmission
     private var _carbonEmission = 0.0
     private var previousCarbonEmission = 0.0
+    private var _cleanEnergyUsage = 0.0
+    private var _nonCleanEnergyUsage = 0.0
+    private var _batteryEnergyUsage = 0.0
 
     /**
      * Record the next cycle.
@@ -100,6 +106,9 @@ public class PowerSourceTableReaderImpl(
         _energyUsage = powerSource.energyUsage
         _carbonIntensity = powerSource.carbonIntensity
         _carbonEmission = powerSource.carbonEmission
+        _cleanEnergyUsage = powerSource.totalCleanEnergyUsage
+        _nonCleanEnergyUsage = powerSource.totalNonCleanEnergyUsage
+        _batteryEnergyUsage = powerSource.totalBatteryEnergyUsage
     }
 
     /**
@@ -114,5 +123,8 @@ public class PowerSourceTableReaderImpl(
         _energyUsage = 0.0
         _carbonIntensity = 0.0
         _carbonEmission = 0.0
+        _cleanEnergyUsage = 0.0
+        _nonCleanEnergyUsage = 0.0
+        _batteryEnergyUsage = 0.0
     }
 }

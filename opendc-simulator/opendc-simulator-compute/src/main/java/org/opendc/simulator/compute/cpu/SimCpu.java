@@ -22,6 +22,7 @@
 
 package org.opendc.simulator.compute.cpu;
 
+import org.opendc.simulator.compute.energy.PowerManagerSingleSupplier;
 import org.opendc.simulator.compute.machine.PerformanceCounters;
 import org.opendc.simulator.compute.models.CpuModel;
 import org.opendc.simulator.engine.FlowConsumer;
@@ -59,9 +60,6 @@ public final class SimCpu extends FlowNode implements FlowSupplier, FlowConsumer
     private FlowEdge muxEdge;
     private FlowEdge psuEdge;
 
-    private final Battery battery;
-    private final EnergyModel energyModel;
-    private final PowerManager powerManager;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Basic Getters and Setters
@@ -137,12 +135,6 @@ public final class SimCpu extends FlowNode implements FlowSupplier, FlowConsumer
         this.maxCapacity = this.cpuModel.getTotalCapacity();
 
         this.cpuPowerModel = CpuPowerModels.linear(400, 200);
-
-        List<Double> greenEnergyProfile = EnergyUtils.generateGreenEnergyProfile(1000, 5000.0);
-
-        this.battery = new Battery(50000.0,0.9, 10000.0);
-        this.energyModel = new EnergyModel(greenEnergyProfile, 1000);
-        this.powerManager = new PowerManager(energyModel, battery);
 
         this.lastCounterUpdate = graph.getEngine().getClock().millis();
         this.cpuFrequencyInv = 1 / this.maxCapacity;
