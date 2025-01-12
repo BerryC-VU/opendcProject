@@ -2,7 +2,7 @@ package org.opendc.simulator.compute.energy
 
 public class PowerManager(
     private val energyModel: EnergyModel,
-    private val battery: Battery
+    private val battery: BatteryModel
 ) {
     public fun supplyPower(demand: Double): Triple<Double, Double, Double> {
         var remainingDemand = demand

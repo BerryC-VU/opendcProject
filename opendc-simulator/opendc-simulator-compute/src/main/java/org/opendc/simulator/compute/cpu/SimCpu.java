@@ -22,20 +22,13 @@
 
 package org.opendc.simulator.compute.cpu;
 
-import org.opendc.simulator.compute.energy.PowerManagerSingleSupplier;
 import org.opendc.simulator.compute.machine.PerformanceCounters;
 import org.opendc.simulator.compute.models.CpuModel;
-import org.opendc.simulator.engine.FlowConsumer;
-import org.opendc.simulator.engine.FlowEdge;
-import org.opendc.simulator.engine.FlowGraph;
-import org.opendc.simulator.engine.FlowNode;
-import org.opendc.simulator.engine.FlowSupplier;
-
-import org.opendc.simulator.compute.energy.Battery;
-import org.opendc.simulator.compute.energy.EnergyModel;
-import org.opendc.simulator.compute.energy.PowerManager;
-import org.opendc.simulator.compute.energy.EnergyUtils;
-import java.util.List;
+import org.opendc.simulator.engine.graph.FlowConsumer;
+import org.opendc.simulator.engine.graph.FlowEdge;
+import org.opendc.simulator.engine.graph.FlowGraph;
+import org.opendc.simulator.engine.graph.FlowNode;
+import org.opendc.simulator.engine.graph.FlowSupplier;
 
 /**
  * A {@link SimCpu} of a machine.
@@ -109,34 +102,16 @@ public final class SimCpu extends FlowNode implements FlowSupplier, FlowConsumer
     // Constructors
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//    public SimCpu(FlowGraph graph, CpuModel cpuModel, int id) {
-//        super(graph);
-//        this.cpuModel = cpuModel;
-//        this.maxCapacity = this.cpuModel.getTotalCapacity();
-//
-//        // TODO: connect this to the front-end
-//        this.cpuPowerModel = CpuPowerModels.linear(400, 200);
-//
-//        this.lastCounterUpdate = graph.getEngine().getClock().millis();
-//
-//        this.cpuFrequencyInv = 1 / this.maxCapacity;
-//    }
-
-
-    /**
-     * Generate a green energy profile for the simulation.
-     *
-     * @return A list of green energy values (in Ws) for each simulation step.
-     */
-
-    public SimCpu(FlowGraph graph, CpuModel cpuModel, int id) {
+    public SimCpu(FlowGraph graph, CpuModel cpuModel, CpuPowerModel powerModel, int id) {
         super(graph);
         this.cpuModel = cpuModel;
         this.maxCapacity = this.cpuModel.getTotalCapacity();
 
-        this.cpuPowerModel = CpuPowerModels.linear(400, 200);
+        // TODO: connect this to the front-end
+        this.cpuPowerModel = powerModel;
 
         this.lastCounterUpdate = graph.getEngine().getClock().millis();
+
         this.cpuFrequencyInv = 1 / this.maxCapacity;
     }
 

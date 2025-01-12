@@ -27,7 +27,7 @@ import java.util.List;
 
 import kotlin.Triple;
 import org.opendc.simulator.compute.cpu.SimCpu;
-import org.opendc.simulator.compute.energy.Battery;
+import org.opendc.simulator.compute.energy.BatteryModel;
 import org.opendc.simulator.compute.energy.EnergyModel;
 import org.opendc.simulator.compute.energy.EnergyUtils;
 import org.opendc.simulator.compute.energy.PowerManager;
@@ -55,7 +55,7 @@ public final class SimPowerSource extends FlowNode implements FlowSupplier {
 
     private CarbonModel carbonModel = null;
     private FlowEdge muxEdge;
-    private final Battery battery;
+    private final BatteryModel battery;
     private final EnergyModel energyModel;
     private final PowerManager powerManager;
     private final PowerManagerSingleSupplier powerManagerSingleSupplier;
@@ -142,7 +142,7 @@ public final class SimPowerSource extends FlowNode implements FlowSupplier {
 
         ArrayList<Double> greenEnergyProfile = EnergyUtils.generateGreenEnergyProfile(1000, 5000.0);
 
-        this.battery = new Battery(50000.0,0.9, 10000.0);
+        this.battery = new BatteryModel(50000.0,0.9, 10000.0);
         this.energyModel = new EnergyModel(greenEnergyProfile, 1000);
         this.powerManager = new PowerManager(energyModel, battery);
         this.powerManagerSingleSupplier = new PowerManagerSingleSupplier(energyModel, battery);

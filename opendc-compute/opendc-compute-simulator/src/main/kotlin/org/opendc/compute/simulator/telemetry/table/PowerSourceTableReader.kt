@@ -72,9 +72,18 @@ public interface PowerSourceTableReader : Exportable {
      */
     public val carbonEmission: Double
 
+    /**
+     * The total clean energy consumption of the host since last sample in J.
+     */
     public val cleanEnergyUsage: Double
 
+    /**
+     * The total non energy consumption of the host since last sample in J.
+     */
     public val nonCleanEnergyUsage: Double
 
+    /**
+     * The total battery energy consumption of the host since last sample in J.
+     */
     public val batteryEnergyUsage: Double
 }

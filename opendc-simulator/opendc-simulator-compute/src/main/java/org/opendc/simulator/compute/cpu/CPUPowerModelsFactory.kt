@@ -23,7 +23,7 @@
 package org.opendc.simulator.compute.cpu
 
 
-import org.opendc.simulator.compute.energy.Battery
+import org.opendc.simulator.compute.energy.BatteryModel
 import org.opendc.simulator.compute.energy.EnergyModel
 import org.opendc.simulator.compute.energy.PowerManager
 import org.opendc.simulator.compute.energy.EnergyUtils
@@ -71,7 +71,7 @@ public fun getPowerModelWithBattery(
     idlePower: Double,
     batteryCapacity: Double
 ): CpuPowerModel {
-    val battery = Battery(batteryCapacity)
+    val battery = BatteryModel(batteryCapacity)
     val energyModel = EnergyModel(EnergyUtils.generateGreenEnergyProfile(1000, 5000.0), simulationSteps = 1000)
     val powerManager = PowerManager(energyModel, battery)
     return CpuPowerModels.withBattery(maxPower, idlePower, battery, powerManager)

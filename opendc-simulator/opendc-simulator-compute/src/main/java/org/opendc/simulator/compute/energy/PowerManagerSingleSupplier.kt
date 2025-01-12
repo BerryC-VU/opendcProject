@@ -2,7 +2,7 @@ package org.opendc.simulator.compute.energy
 
 public class PowerManagerSingleSupplier(
     private val energyModel: EnergyModel,
-    private val battery: Battery
+    private val battery: BatteryModel
 ) {
     public fun supplyPower(demand: Double): Triple<Double, Double, Double> {
         val greenEnergy = energyModel.getGreenEnergy()

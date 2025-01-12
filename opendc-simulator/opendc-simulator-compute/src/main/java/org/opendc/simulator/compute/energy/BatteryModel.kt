@@ -1,6 +1,6 @@
 package org.opendc.simulator.compute.energy
 
-public class Battery(
+public class BatteryModel(
     public val capacity: Double,        // Maximum battery capacity in Ws
     private val chargeEfficiency: Double = 0.9,
     private val maxChargeRate: Double = 10.0 * 1000

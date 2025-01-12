@@ -88,9 +88,24 @@ public class PowerSourceTableReaderImpl(
         get() = _carbonEmission - previousCarbonEmission
     private var _carbonEmission = 0.0
     private var previousCarbonEmission = 0.0
+
+    override val cleanEnergyUsage: Double
+        get() = _cleanEnergyUsage - previousCleanEnergyUsage
+
+    override val nonCleanEnergyUsage: Double
+        get() = _nonCleanEnergyUsage - previousNonCleanEnergyUsage
+
+    override val batteryEnergyUsage: Double
+        get() = _batteryEnergyUsage - previousBatteryEnergyUsage
+
     private var _cleanEnergyUsage = 0.0
+    private var previousCleanEnergyUsage = 0.0
+
     private var _nonCleanEnergyUsage = 0.0
+    private var previousNonCleanEnergyUsage = 0.0
+
     private var _batteryEnergyUsage = 0.0
+    private var previousBatteryEnergyUsage = 0.0
 
     /**
      * Record the next cycle.
@@ -117,6 +132,9 @@ public class PowerSourceTableReaderImpl(
     override fun reset() {
         previousEnergyUsage = _energyUsage
         previousCarbonEmission = _carbonEmission
+        previousCleanEnergyUsage = _cleanEnergyUsage
+        previousNonCleanEnergyUsage = _cleanEnergyUsage
+        previousBatteryEnergyUsage = _cleanEnergyUsage
 
         _hostsConnected = 0
         _powerDraw = 0.0
