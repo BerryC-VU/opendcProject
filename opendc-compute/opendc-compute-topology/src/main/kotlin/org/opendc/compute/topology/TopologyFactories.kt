@@ -24,11 +24,17 @@
 
 package org.opendc.compute.topology
 
+import org.opendc.compute.topology.specs.BatteryJSONSpec
+import org.opendc.compute.topology.specs.BatterySpec
 import org.opendc.compute.topology.specs.ClusterJSONSpec
 import org.opendc.compute.topology.specs.ClusterSpec
+import org.opendc.compute.topology.specs.EnergyJSONSpec
+import org.opendc.compute.topology.specs.EnergySpec
 import org.opendc.compute.topology.specs.HostJSONSpec
 import org.opendc.compute.topology.specs.HostSpec
 import org.opendc.compute.topology.specs.PowerSourceSpec
+import org.opendc.compute.topology.specs.SinusoidalEnergySupplyJSONSpec
+import org.opendc.compute.topology.specs.SinusoidalEnergySupplySpec
 import org.opendc.compute.topology.specs.TopologySpec
 import org.opendc.simulator.compute.cpu.getPowerModel
 import org.opendc.simulator.compute.models.CpuModel
@@ -108,10 +114,32 @@ private fun ClusterJSONSpec.toClusterSpec(random: RandomGenerator): ClusterSpec 
             UUID(random.nextLong(), (clusterId).toLong()),
             totalPower = this.powerSource.totalPower,
             carbonTracePath = this.powerSource.carbonTracePath,
+            battery = this.powerSource.battery?.toBatterySpec(),
+            cleanEnergy = this.powerSource.cleanEnergy?.toEnergySpec(),
+            nonCleanEnergy = this.powerSource.nonCleanEnergy?.toEnergySpec()
         )
     clusterId++
     return ClusterSpec(this.name, hostSpecs, powerSourceSpec)
 }
+
+private fun BatteryJSONSpec.toBatterySpec(): BatterySpec {
+    return BatterySpec(
+        type, capacity, chargeEfficiency, maxChargeRate, initialLevel
+    )
+}
+
+private fun EnergyJSONSpec.toEnergySpec(): EnergySpec {
+    return EnergySpec(
+        this.type, this.supplyModel?.toEnergySupplySpec(), this.energySupplyTracePath, this.carbonTracePath
+    )
+}
+
+private fun SinusoidalEnergySupplyJSONSpec.toEnergySupplySpec(): SinusoidalEnergySupplySpec {
+    return SinusoidalEnergySupplySpec(
+        amplitude, period, phaseShift, offset
+    )
+}
+
 
 /**
  * Helper method to convert a [HostJSONSpec] into a [HostSpec]s.

@@ -31,7 +31,7 @@ public data class PowerSourceSpec(
     val meta: Map<String, Any> = emptyMap(),
     val totalPower: Long = Long.MAX_VALUE,
     val carbonTracePath: String? = null,
-    val batterySpec: BatterySpec? = null,
-    val cleanEnergySpec: EnergySpec? = null,
-    val nonCleanEnergySpec: EnergySpec? = null,
+    val battery: BatterySpec? = null,
+    val cleanEnergy: EnergySpec? = null,
+    val nonCleanEnergy: EnergySpec? = null,
 )

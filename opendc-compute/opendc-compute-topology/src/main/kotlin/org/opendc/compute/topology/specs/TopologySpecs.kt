@@ -26,6 +26,11 @@ import kotlinx.serialization.Serializable
 import org.opendc.common.units.DataSize
 import org.opendc.common.units.Frequency
 import org.opendc.common.units.Power
+import org.opendc.compute.topology.specs.BatteryJSONSpec.Companion.BATTERY_DEFAULT
+import org.opendc.compute.topology.specs.EnergyJSONSpec.Companion.ENERGY_CLEAN_DEFAULT
+import org.opendc.compute.topology.specs.EnergyJSONSpec.Companion.ENERGY_NON_CLEAN_DEFAULT
+import org.opendc.compute.topology.specs.SinusoidalEnergySupplyJSONSpec.Companion.ENERGY_SUPPLY_DEFAULT
+import org.opendc.compute.topology.specs.SinusoidalEnergySupplyJSONSpec.Companion.ENERGY_SUPPLY_MAXIMUM
 
 /**
  * Definition of a Topology modeled in the simulation.
@@ -147,11 +152,93 @@ public data class PowerSourceJSONSpec(
     val arch: String = "unknown",
     val totalPower: Long = Long.MAX_VALUE,
     val carbonTracePath: String? = null,
+    val battery: BatteryJSONSpec? = BATTERY_DEFAULT,
+    val cleanEnergy: EnergyJSONSpec? = ENERGY_CLEAN_DEFAULT,
+    val nonCleanEnergy: EnergyJSONSpec? = ENERGY_NON_CLEAN_DEFAULT,
 ) {
     public companion object {
         public val DFLT: PowerSourceJSONSpec =
             PowerSourceJSONSpec(
                 totalPower = Long.MAX_VALUE,
+            )
+    }
+}
+
+@Serializable
+public data class BatteryJSONSpec(
+    public val type: String = BATTERY_TYPE_SMOOTH,
+    public val capacity: Power,
+    public val chargeEfficiency: Double,
+    public val maxChargeRate: Power,
+    public val initialLevel: Power,
+) {
+    public companion object {
+
+        public val BATTERY_TYPE_SMOOTH: String = "Smooth"
+        public val BATTERY_TYPE_HARD: String = "Hard"
+
+        public val BATTERY_DEFAULT: BatteryJSONSpec =
+            BatteryJSONSpec(
+                type = BATTERY_TYPE_SMOOTH,
+                capacity = Power.ofKWatts(50*3600),
+                chargeEfficiency = 0.9,
+                maxChargeRate = Power.ofKWatts(10*3600),
+                initialLevel = Power.ofKWatts(50*3600)
+            )
+    }
+}
+
+@Serializable
+public data class EnergyJSONSpec(
+    public val type: String = ENERGY_CONSTANT,
+
+    public val supplyModel: SinusoidalEnergySupplyJSONSpec? = ENERGY_SUPPLY_MAXIMUM,
+    public val energySupplyTracePath: String? = null,
+
+    public val carbonTracePath: String? = null,
+) {
+    public companion object {
+        public val ENERGY_CONSTANT: String = "Constant"
+        public val ENERGY_SINUSOIDAL: String = "Sinusoidal"
+        public val ENERGY_TRACE: String = "Traces"
+
+        public val ENERGY_CLEAN_DEFAULT: EnergyJSONSpec =
+            EnergyJSONSpec(
+                type = ENERGY_SINUSOIDAL,
+                supplyModel = ENERGY_SUPPLY_DEFAULT
+
+            )
+
+        public val ENERGY_NON_CLEAN_DEFAULT: EnergyJSONSpec =
+            EnergyJSONSpec(
+                type = ENERGY_CONSTANT,
+                supplyModel = ENERGY_SUPPLY_MAXIMUM
+            )
+    }
+}
+
+@Serializable
+public data class SinusoidalEnergySupplyJSONSpec(
+    public val amplitude: Long,
+    public val period: Long,
+    public val phaseShift: Long,
+    public val offset: Long,
+) {
+    public companion object {
+        public val ENERGY_SUPPLY_MAXIMUM: SinusoidalEnergySupplyJSONSpec =
+            SinusoidalEnergySupplyJSONSpec(
+                amplitude = 0,
+                period = 24,
+                phaseShift = 0,
+                offset = Long.MAX_VALUE
+            )
+
+        public val ENERGY_SUPPLY_DEFAULT: SinusoidalEnergySupplyJSONSpec =
+            SinusoidalEnergySupplyJSONSpec(
+                amplitude = 2000,
+                period = 24,
+                phaseShift = 0,
+                offset = 2000
             )
     }
 }
