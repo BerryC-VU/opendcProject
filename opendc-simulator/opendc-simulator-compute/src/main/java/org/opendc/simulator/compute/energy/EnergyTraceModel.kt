@@ -5,7 +5,7 @@ import org.opendc.simulator.compute.power.CarbonFragment
 public class EnergyTraceModel(
     private val energyType: String,
     private val energyFragments: List<EnergyFragment>,
-    private val carbonFragments: List<CarbonFragment>,
+    private val carbonFragments: List<CarbonFragment>?,
     private val startTime: Long = 0L
 ): IEnergySupplier {
 
@@ -51,6 +51,7 @@ public class EnergyTraceModel(
      */
     private fun findCorrectCarbonFragment(absoluteTime: Long) {
         // Traverse to the previous fragment, until you reach the correct fragment
+        carbonFragments ?: return
         val fragment = currentCarbonFragment ?: return
         while (absoluteTime < fragment.startTime) {
             this.currentCarbonFragment = carbonFragments[--this.carbonFragmentIndex]

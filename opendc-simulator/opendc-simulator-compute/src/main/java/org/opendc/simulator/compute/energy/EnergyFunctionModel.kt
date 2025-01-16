@@ -5,9 +5,9 @@ import org.opendc.simulator.compute.power.CarbonFragment
 public class EnergyFunctionModel(
     private val energyType: String,
     private val energySupplier: SinusoidalEnergySupplyModel,
-    private val carbonFragments: List<CarbonFragment>,
+    private val carbonFragments: List<CarbonFragment>?,
     private val startTime: Long = 0L
-): IEnergySupplier {
+) : IEnergySupplier {
 
     private var currentCarbonFragment: CarbonFragment? = null
     private var carbonFragmentIndex = 0
@@ -26,6 +26,7 @@ public class EnergyFunctionModel(
      */
     private fun findCorrectCarbonFragment(absoluteTime: Long) {
         // Traverse to the previous fragment, until you reach the correct fragment
+        carbonFragments ?: return
         val fragment = currentCarbonFragment ?: return
         while (absoluteTime < fragment.startTime) {
             this.currentCarbonFragment = carbonFragments[--this.carbonFragmentIndex]

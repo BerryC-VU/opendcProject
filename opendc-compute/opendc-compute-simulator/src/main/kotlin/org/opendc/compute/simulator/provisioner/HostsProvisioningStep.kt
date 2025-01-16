@@ -39,6 +39,8 @@ import org.opendc.simulator.compute.energy.EnergyMixedSourceManager
 import org.opendc.simulator.compute.energy.EnergySingleSourceManager
 import org.opendc.simulator.compute.energy.EnergyTraceModel
 import org.opendc.simulator.compute.energy.IEnergyManager
+import org.opendc.simulator.compute.energy.IEnergySupplier.Companion.ENERGY_CLEAN
+import org.opendc.simulator.compute.energy.IEnergySupplier.Companion.ENERGY_NON_CLEAN
 import org.opendc.simulator.compute.energy.SinusoidalEnergySupplyModel
 import org.opendc.simulator.compute.power.SimPowerSource
 import org.opendc.simulator.engine.engine.FlowEngine
@@ -128,19 +130,27 @@ public class HostsProvisioningStep internal constructor(
 
             val cleanEnergySupplier = if (cleanEnergySpec.type == ENERGY_FUNCTION) {
                 val supplySpec = cleanEnergySpec.supplyModel ?: return null
+                val carbonFragments = getCarbonFragments(cleanEnergySpec.carbonTracePath)
                 EnergyFunctionModel(
+                    ENERGY_CLEAN,
                     SinusoidalEnergySupplyModel(
                         supplySpec.min,
                         supplySpec.max,
                         supplySpec.period,
                         supplySpec.phaseShift
-                    )
+                    ),
+                    carbonFragments,
+                    startTime
                 )
             } else if (cleanEnergySpec.type == ENERGY_TRACE) {
                 val traceSpec = cleanEnergySpec.energySupplyTracePath
                 val energyFragments = getEnergyFragments(traceSpec) ?: return null
+                val carbonFragments = getCarbonFragments(cleanEnergySpec.carbonTracePath)
                 EnergyTraceModel(
-                    energyFragments
+                    ENERGY_CLEAN,
+                    energyFragments,
+                    carbonFragments,
+                    startTime
                 )
             } else {
                 return null
@@ -148,19 +158,27 @@ public class HostsProvisioningStep internal constructor(
 
             val nonCleanEnergySupplier = if (nonCleanEnergySpec.type == ENERGY_FUNCTION) {
                 val supplySpec = nonCleanEnergySpec.supplyModel ?: return null
+                val carbonFragments = getCarbonFragments(nonCleanEnergySpec.carbonTracePath)
                 EnergyFunctionModel(
+                    ENERGY_NON_CLEAN,
                     SinusoidalEnergySupplyModel(
                         supplySpec.min,
                         supplySpec.max,
                         supplySpec.period,
                         supplySpec.phaseShift
-                    )
+                    ),
+                    carbonFragments,
+                    startTime
                 )
             } else if (nonCleanEnergySpec.type == ENERGY_TRACE) {
                 val traceSpec = nonCleanEnergySpec.energySupplyTracePath
                 val energyFragments = getEnergyFragments(traceSpec) ?: return null
+                val carbonFragments = getCarbonFragments(nonCleanEnergySpec.carbonTracePath)
                 EnergyTraceModel(
-                    energyFragments
+                    ENERGY_NON_CLEAN,
+                    energyFragments,
+                    carbonFragments,
+                    startTime
                 )
             } else {
                 return null
