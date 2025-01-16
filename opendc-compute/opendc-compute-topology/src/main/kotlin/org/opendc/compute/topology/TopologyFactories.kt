@@ -24,6 +24,7 @@
 
 package org.opendc.compute.topology
 
+import org.opendc.common.units.Power
 import org.opendc.compute.topology.specs.BatteryJSONSpec
 import org.opendc.compute.topology.specs.BatterySpec
 import org.opendc.compute.topology.specs.ClusterJSONSpec
@@ -124,7 +125,11 @@ private fun ClusterJSONSpec.toClusterSpec(random: RandomGenerator): ClusterSpec 
 
 private fun BatteryJSONSpec.toBatterySpec(): BatterySpec {
     return BatterySpec(
-        type, capacity, chargeEfficiency, maxChargeRate, initialLevel
+        type = type,
+        capacity = Power.ofKWatts(capacity),
+        chargeEfficiency = chargeEfficiency,
+        maxChargeRate = Power.ofKWatts(maxChargeRate),
+        initialLevel = Power.ofKWatts(initialLevel)
     )
 }
 
@@ -136,7 +141,10 @@ private fun EnergyJSONSpec.toEnergySpec(): EnergySpec {
 
 private fun SinusoidalEnergySupplyJSONSpec.toEnergySupplySpec(): SinusoidalEnergySupplySpec {
     return SinusoidalEnergySupplySpec(
-        amplitude, period, phaseShift, offset
+        min = Power.ofWatts(min),
+        max = Power.ofWatts(max),
+        period = period,
+        phaseShift = phaseShift,
     )
 }
 

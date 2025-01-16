@@ -20,38 +20,16 @@
  * SOFTWARE.
  */
 
-@file:JvmName("Tables")
+@file:JvmName("CarbonIntensityColumns")
 
 package org.opendc.trace.conv
 
 /**
- * A table containing all workflows in a workload.
+ * A column containing the task identifier.
  */
-public const val TABLE_WORKFLOWS: String = "workflows"
+public const val ENERGY_SUPPLY_TIMESTAMP: String = "timestamp"
 
 /**
- * A table containing all tasks in a workload.
+ * A column containing the task identifier.
  */
-public const val TABLE_TASKS: String = "tasks"
-
-/**
- * A table containing all resources in a workload.
- */
-public const val TABLE_RESOURCES: String = "resources"
-
-/**
- * A table containing all resource states in a workload.
- */
-public const val TABLE_RESOURCE_STATES: String = "resource_states"
-
-/**
- * A table containing the groups of resources that interfere when run on the same execution platform.
- */
-public const val TABLE_INTERFERENCE_GROUPS: String = "interference_groups"
-
-public const val TABLE_CARBON_INTENSITIES: String = "carbon_intensities"
-
-public const val TABLE_FAILURES: String = "failures"
-
-
-public const val TABLE_ENERGY_SUPPLY: String = "energy_supply"
+public const val ENERGY_SUPPLY_VALUE: String = "energy_supply"

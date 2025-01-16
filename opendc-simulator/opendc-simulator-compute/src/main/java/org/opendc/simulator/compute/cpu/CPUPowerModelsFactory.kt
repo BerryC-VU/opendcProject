@@ -24,9 +24,6 @@ package org.opendc.simulator.compute.cpu
 
 
 import org.opendc.simulator.compute.energy.BatteryModel
-import org.opendc.simulator.compute.energy.EnergyModel
-import org.opendc.simulator.compute.energy.PowerManager
-import org.opendc.simulator.compute.energy.EnergyUtils
 
 // TODO: couple this correctly
 public enum class CPUPowerModel {
@@ -72,7 +69,7 @@ public fun getPowerModelWithBattery(
     batteryCapacity: Double
 ): CpuPowerModel {
     val battery = BatteryModel(batteryCapacity)
-    val energyModel = EnergyModel(EnergyUtils.generateGreenEnergyProfile(1000, 5000.0), simulationSteps = 1000)
-    val powerManager = PowerManager(energyModel, battery)
+//    val energyModel = EnergyModel(EnergyUtils.generateGreenEnergyProfile(1000, 5000.0), simulationSteps = 1000)
+//    val powerManager = PowerManager(energyModel, battery)
     return CpuPowerModels.withBattery(maxPower, idlePower, battery, powerManager)
 }

@@ -98,6 +98,12 @@ public class PowerSourceTableReaderImpl(
     override val batteryEnergyUsage: Double
         get() = _batteryEnergyUsage - previousBatteryEnergyUsage
 
+    override val cleanEnergyCarbonEmission: Double
+        get() = _cleanEnergyCarbonEmission - previousCleanEnergyCarbonEmission
+
+    override val nonCleanEnergyCarbonEmission: Double
+        get() = _nonCleanEnergyCarbonEmission - previousNonCleanEnergyCarbonEmission
+
     private var _cleanEnergyUsage = 0.0
     private var previousCleanEnergyUsage = 0.0
 
@@ -106,6 +112,12 @@ public class PowerSourceTableReaderImpl(
 
     private var _batteryEnergyUsage = 0.0
     private var previousBatteryEnergyUsage = 0.0
+
+    private var _cleanEnergyCarbonEmission = 0.0
+    private var previousCleanEnergyCarbonEmission = 0.0
+
+    private var _nonCleanEnergyCarbonEmission = 0.0
+    private var previousNonCleanEnergyCarbonEmission = 0.0
 
     /**
      * Record the next cycle.
@@ -124,6 +136,8 @@ public class PowerSourceTableReaderImpl(
         _cleanEnergyUsage = powerSource.totalCleanEnergyUsage
         _nonCleanEnergyUsage = powerSource.totalNonCleanEnergyUsage
         _batteryEnergyUsage = powerSource.totalBatteryEnergyUsage
+        _cleanEnergyCarbonEmission = powerSource.totalCleanEnergyCarbonEmission
+        _nonCleanEnergyCarbonEmission = powerSource.totalNonCleanEnergyCarbonEmission
     }
 
     /**
@@ -135,6 +149,8 @@ public class PowerSourceTableReaderImpl(
         previousCleanEnergyUsage = _cleanEnergyUsage
         previousNonCleanEnergyUsage = _cleanEnergyUsage
         previousBatteryEnergyUsage = _cleanEnergyUsage
+        previousCleanEnergyCarbonEmission = _cleanEnergyCarbonEmission
+        previousNonCleanEnergyCarbonEmission = _nonCleanEnergyCarbonEmission
 
         _hostsConnected = 0
         _powerDraw = 0.0
@@ -144,5 +160,7 @@ public class PowerSourceTableReaderImpl(
         _cleanEnergyUsage = 0.0
         _nonCleanEnergyUsage = 0.0
         _batteryEnergyUsage = 0.0
+        _cleanEnergyCarbonEmission = 0.0
+        _nonCleanEnergyCarbonEmission = 0.0
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 AtLarge Research
+ * Copyright (c) 2021 AtLarge Research
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,38 +20,33 @@
  * SOFTWARE.
  */
 
-@file:JvmName("Tables")
+@file:JvmName("ComputeWorkloadsNew")
 
-package org.opendc.trace.conv
+package org.opendc.compute.carbon
 
-/**
- * A table containing all workflows in a workload.
- */
-public const val TABLE_WORKFLOWS: String = "workflows"
-
-/**
- * A table containing all tasks in a workload.
- */
-public const val TABLE_TASKS: String = "tasks"
+import org.opendc.simulator.compute.energy.EnergyFragment
+import org.opendc.simulator.compute.power.CarbonFragment
+import java.io.File
+import javax.management.InvalidAttributeValueException
 
 /**
- * A table containing all resources in a workload.
+ * Construct a workload from a trace.
  */
-public const val TABLE_RESOURCES: String = "resources"
+public fun getEnergyFragments(pathToFile: String?): List<EnergyFragment>? {
+    if (pathToFile == null) {
+        return null
+    }
+
+    return getEnergyFragments(File(pathToFile))
+}
 
 /**
- * A table containing all resource states in a workload.
+ * Construct a workload from a trace.
  */
-public const val TABLE_RESOURCE_STATES: String = "resource_states"
+public fun getEnergyFragments(file: File): List<EnergyFragment> {
+    if (!file.exists()) {
+        throw InvalidAttributeValueException("The carbon trace cannot be found")
+    }
 
-/**
- * A table containing the groups of resources that interfere when run on the same execution platform.
- */
-public const val TABLE_INTERFERENCE_GROUPS: String = "interference_groups"
-
-public const val TABLE_CARBON_INTENSITIES: String = "carbon_intensities"
-
-public const val TABLE_FAILURES: String = "failures"
-
-
-public const val TABLE_ENERGY_SUPPLY: String = "energy_supply"
+    return EnergyTraceLoader().get(file)
+}

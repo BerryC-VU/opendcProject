@@ -31,7 +31,13 @@ public data class PowerSourceSpec(
     val meta: Map<String, Any> = emptyMap(),
     val totalPower: Long = Long.MAX_VALUE,
     val carbonTracePath: String? = null,
+    val energyManager: String? = null,
     val battery: BatterySpec? = null,
     val cleanEnergy: EnergySpec? = null,
     val nonCleanEnergy: EnergySpec? = null,
-)
+) {
+    public companion object {
+        public val ENERGY_MIX_MANAGER: String = "mix"
+        public val ENERGY_SINGLE_MANAGER: String = "single"
+    }
+}

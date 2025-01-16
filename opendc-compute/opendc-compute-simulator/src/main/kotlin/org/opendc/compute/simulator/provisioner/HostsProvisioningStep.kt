@@ -23,10 +23,23 @@
 package org.opendc.compute.simulator.provisioner
 
 import org.opendc.compute.carbon.getCarbonFragments
+import org.opendc.compute.carbon.getEnergyFragments
 import org.opendc.compute.simulator.host.SimHost
 import org.opendc.compute.simulator.service.ComputeService
 import org.opendc.compute.topology.specs.ClusterSpec
+import org.opendc.compute.topology.specs.EnergyJSONSpec.Companion.ENERGY_FUNCTION
+import org.opendc.compute.topology.specs.EnergyJSONSpec.Companion.ENERGY_TRACE
 import org.opendc.compute.topology.specs.HostSpec
+import org.opendc.compute.topology.specs.PowerSourceSpec
+import org.opendc.compute.topology.specs.PowerSourceSpec.Companion.ENERGY_MIX_MANAGER
+import org.opendc.compute.topology.specs.PowerSourceSpec.Companion.ENERGY_SINGLE_MANAGER
+import org.opendc.simulator.compute.energy.BatteryModel
+import org.opendc.simulator.compute.energy.EnergyFunctionModel
+import org.opendc.simulator.compute.energy.EnergyMixedSourceManager
+import org.opendc.simulator.compute.energy.EnergySingleSourceManager
+import org.opendc.simulator.compute.energy.EnergyTraceModel
+import org.opendc.simulator.compute.energy.IEnergyManager
+import org.opendc.simulator.compute.energy.SinusoidalEnergySupplyModel
 import org.opendc.simulator.compute.power.SimPowerSource
 import org.opendc.simulator.engine.engine.FlowEngine
 import org.opendc.simulator.engine.graph.FlowDistributor
@@ -58,8 +71,9 @@ public class HostsProvisioningStep internal constructor(
             // Create the Power Source to which hosts are connected
 
             val carbonFragments = getCarbonFragments(cluster.powerSource.carbonTracePath)
-
-            val simPowerSource = SimPowerSource(graph, cluster.powerSource.totalPower.toDouble(), carbonFragments, startTime)
+            val energyManager = genEnergyManager(cluster.powerSource)
+            val simPowerSource = SimPowerSource(graph, cluster.powerSource.totalPower.toDouble(), carbonFragments,
+                startTime, energyManager)
 
             service.addPowerSource(simPowerSource)
             simPowerSources.add(simPowerSource)
@@ -96,5 +110,79 @@ public class HostsProvisioningStep internal constructor(
                 simPowerSource.close()
             }
         }
+    }
+
+    private fun genEnergyManager(powerSource: PowerSourceSpec): IEnergyManager? {
+        val batterySpec = powerSource.battery
+        val cleanEnergySpec = powerSource.cleanEnergy
+        val nonCleanEnergySpec = powerSource.nonCleanEnergy
+        if (batterySpec != null && cleanEnergySpec != null
+            && nonCleanEnergySpec != null) {
+
+            val batteryModel = BatteryModel(
+                type = batterySpec.type,
+                capacity = batterySpec.capacity,
+                chargeEfficiency = batterySpec.chargeEfficiency,
+                maxChargeRate = batterySpec.maxChargeRate
+            )
+
+            val cleanEnergySupplier = if (cleanEnergySpec.type == ENERGY_FUNCTION) {
+                val supplySpec = cleanEnergySpec.supplyModel ?: return null
+                EnergyFunctionModel(
+                    SinusoidalEnergySupplyModel(
+                        supplySpec.min,
+                        supplySpec.max,
+                        supplySpec.period,
+                        supplySpec.phaseShift
+                    )
+                )
+            } else if (cleanEnergySpec.type == ENERGY_TRACE) {
+                val traceSpec = cleanEnergySpec.energySupplyTracePath
+                val energyFragments = getEnergyFragments(traceSpec) ?: return null
+                EnergyTraceModel(
+                    energyFragments
+                )
+            } else {
+                return null
+            }
+
+            val nonCleanEnergySupplier = if (nonCleanEnergySpec.type == ENERGY_FUNCTION) {
+                val supplySpec = nonCleanEnergySpec.supplyModel ?: return null
+                EnergyFunctionModel(
+                    SinusoidalEnergySupplyModel(
+                        supplySpec.min,
+                        supplySpec.max,
+                        supplySpec.period,
+                        supplySpec.phaseShift
+                    )
+                )
+            } else if (nonCleanEnergySpec.type == ENERGY_TRACE) {
+                val traceSpec = nonCleanEnergySpec.energySupplyTracePath
+                val energyFragments = getEnergyFragments(traceSpec) ?: return null
+                EnergyTraceModel(
+                    energyFragments
+                )
+            } else {
+                return null
+            }
+
+            val energyManager = if (powerSource.energyManager == ENERGY_MIX_MANAGER) {
+                EnergyMixedSourceManager(
+                    cleanEnergySupplier,
+                    nonCleanEnergySupplier,
+                    batteryModel
+                )
+            } else if (powerSource.energyManager == ENERGY_SINGLE_MANAGER) {
+                EnergySingleSourceManager(
+                    cleanEnergySupplier,
+                    nonCleanEnergySupplier,
+                    batteryModel
+                )
+            } else {
+                null
+            }
+            return energyManager
+        }
+        return null
     }
 }
