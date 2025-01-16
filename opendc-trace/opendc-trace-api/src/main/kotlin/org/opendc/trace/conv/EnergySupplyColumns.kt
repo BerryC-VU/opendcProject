@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-@file:JvmName("CarbonIntensityColumns")
+@file:JvmName("EnergySupplyColumns")
 
 package org.opendc.trace.conv
 

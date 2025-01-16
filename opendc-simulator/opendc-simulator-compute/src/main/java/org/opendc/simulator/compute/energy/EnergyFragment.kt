@@ -5,15 +5,7 @@ import org.opendc.common.units.Power
 public class EnergyFragment(
     public var startTime: Long = 0,
     public var endTime: Long = 0,
-    public var energy: Power = Power.ZERO
+    energy: Double = 0.0
 ) {
-    public constructor(
-        startTime: Long,
-        endTime: Long,
-        energy: Double,
-    ) : this() {
-        this.startTime = startTime
-        this.endTime = endTime
-        this.energy = Power.ofWatts(energy)
-    }
+    public var energy: Power = Power.ofWatts(energy)
 }

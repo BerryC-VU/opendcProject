@@ -68,6 +68,16 @@ public interface PowerSourceTableReader : Exportable {
     public val carbonIntensity: Double
 
     /**
+     * The current carbon intensity from clean energy of the host in gCO2 / kW.
+     */
+    public val cleanEnergyCarbonIntensity: Double
+
+    /**
+     * The current carbon intensity from non-clean energy of the host in gCO2 / kW.
+     */
+    public val nonCleanEnergyCarbonIntensity: Double
+
+    /**
      * The current carbon emission since the last deadline in g.
      */
     public val carbonEmission: Double

@@ -62,14 +62,3 @@ public fun getPowerModel(modelType: String): CpuPowerModel {
         else -> throw IllegalArgumentException("Unknown power modelType $modelType")
     }
 }
-
-public fun getPowerModelWithBattery(
-    maxPower: Double,
-    idlePower: Double,
-    batteryCapacity: Double
-): CpuPowerModel {
-    val battery = BatteryModel(batteryCapacity)
-//    val energyModel = EnergyModel(EnergyUtils.generateGreenEnergyProfile(1000, 5000.0), simulationSteps = 1000)
-//    val powerManager = PowerManager(energyModel, battery)
-    return CpuPowerModels.withBattery(maxPower, idlePower, battery, powerManager)
-}

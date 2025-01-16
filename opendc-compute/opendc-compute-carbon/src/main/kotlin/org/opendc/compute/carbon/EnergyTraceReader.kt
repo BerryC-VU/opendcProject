@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-@file:JvmName("ComputeWorkloadsNew")
+@file:JvmName("ComputeEnergyNew")
 
 package org.opendc.compute.carbon
 

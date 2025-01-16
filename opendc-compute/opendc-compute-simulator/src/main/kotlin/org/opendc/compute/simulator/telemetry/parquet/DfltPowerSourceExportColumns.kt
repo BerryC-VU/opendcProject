@@ -70,6 +70,21 @@ public object DfltPowerSourceExportColumns {
             field = Types.required(FLOAT).named("energy_usage"),
         ) { it.energyUsage }
 
+    public val CLEAN_ENERGY_USAGE: ExportColumn<PowerSourceTableReader> =
+        ExportColumn(
+            field = Types.required(FLOAT).named("clean_energy_usage"),
+        ) { it.cleanEnergyUsage }
+
+    public val NON_CLEAN_ENERGY_USAGE: ExportColumn<PowerSourceTableReader> =
+        ExportColumn(
+            field = Types.required(FLOAT).named("non_clean_energy_usage"),
+        ) { it.nonCleanEnergyUsage }
+
+    public val BATTERY_ENERGY_USAGE: ExportColumn<PowerSourceTableReader> =
+        ExportColumn(
+            field = Types.required(FLOAT).named("battery_energy_usage"),
+        ) { it.batteryEnergyUsage }
+
     public val CARBON_INTENSITY: ExportColumn<PowerSourceTableReader> =
         ExportColumn(
             field = Types.required(FLOAT).named("carbon_intensity"),
@@ -79,6 +94,26 @@ public object DfltPowerSourceExportColumns {
         ExportColumn(
             field = Types.required(FLOAT).named("carbon_emission"),
         ) { it.carbonEmission }
+
+    public val CLEAN_CARBON_INTENSITY: ExportColumn<PowerSourceTableReader> =
+        ExportColumn(
+            field = Types.required(FLOAT).named("clean_carbon_intensity"),
+        ) { it.carbonIntensity }
+
+    public val CLEAN_CARBON_EMISSION: ExportColumn<PowerSourceTableReader> =
+        ExportColumn(
+            field = Types.required(FLOAT).named("clean_carbon_emission"),
+        ) { it.cleanEnergyCarbonEmission }
+
+    public val NON_CLEAN_CARBON_INTENSITY: ExportColumn<PowerSourceTableReader> =
+        ExportColumn(
+            field = Types.required(FLOAT).named("non_clean_energy_carbon_intensity"),
+        ) { it.carbonIntensity }
+
+    public val NON_CLEAN_CARBON_EMISSION: ExportColumn<PowerSourceTableReader> =
+        ExportColumn(
+            field = Types.required(FLOAT).named("non_clean_energy_carbon_emission"),
+        ) { it.nonCleanEnergyCarbonEmission }
 
     /**
      * The columns that are always included in the output file.

@@ -46,13 +46,13 @@ public final class SimPowerSource extends FlowNode implements FlowSupplier {
     private double totalBatteryEnergyUsage = 0.0f;
 
     private double carbonIntensity = 0.0f;
+    private double cleanEnergyCarbonIntensity = 0.0f;
+    private double nonCleanEnergyCarbonIntensity = 0.0f;
     private double totalCarbonEmission = 0.0f;
     private double totalCleanEnergyCarbonEmission = 0.0f;
     private double totalNonCleanEnergyCarbonEmission = 0.0f;
 
     private CarbonModel carbonModel = null;
-    private CarbonModel cleanEnergyCarbonModel = null;
-    private CarbonModel nonCleanEnergyCarbonModel = null;
     private FlowEdge muxEdge;
     private final IEnergyManager energyManager;
 
@@ -92,6 +92,14 @@ public final class SimPowerSource extends FlowNode implements FlowSupplier {
 
     public double getCarbonIntensity() {
         return this.carbonIntensity;
+    }
+
+    public double getCleanEnergyCarbonIntensity() {
+        return this.cleanEnergyCarbonIntensity;
+    }
+
+    public double getNonCleanEnergyCarbonIntensity() {
+        return this.nonCleanEnergyCarbonIntensity;
     }
 
     /**
@@ -202,14 +210,20 @@ public final class SimPowerSource extends FlowNode implements FlowSupplier {
                 this.totalCleanEnergyUsage += cleanEnergyUsage;
                 this.totalNonCleanEnergyUsage += nonCleanEnergyUsage;
                 this.totalBatteryEnergyUsage += batteryEnergyUsage;
+                this.cleanEnergyCarbonIntensity = cleanEnergyCarbonIntensity;
                 this.totalCleanEnergyCarbonEmission += cleanEnergyCarbonIntensity *
                     (cleanEnergyUsage / 3600000.0);
+                this.nonCleanEnergyCarbonIntensity = nonCleanEnergyCarbonIntensity;
                 this.totalNonCleanEnergyCarbonEmission += nonCleanEnergyCarbonIntensity *
                     (nonCleanEnergyUsage / 3600000.0);
+                this.totalEnergyUsage += energyUsage;
+                this.carbonIntensity = cleanEnergyCarbonIntensity + nonCleanEnergyCarbonIntensity;
+                this.totalCarbonEmission += this.carbonIntensity * (energyUsage / 3600000.0);
+            } else {
+                // Compute the energy usage of the machine
+                this.totalEnergyUsage += energyUsage;
+                this.totalCarbonEmission += this.carbonIntensity * (energyUsage / 3600000.0);
             }
-            // Compute the energy usage of the machine
-            this.totalEnergyUsage += energyUsage;
-            this.totalCarbonEmission += this.carbonIntensity * (energyUsage / 3600000.0);
         }
     }
 

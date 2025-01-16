@@ -41,22 +41,6 @@ public class CpuPowerModels {
         return new ConstantPowerModel(power);
     }
 
-    public static CpuPowerModel withBattery(double maxPower, double idlePower, BatteryModel battery, EnergyMixedSourceManager energyMixedManager) {
-        return new CpuPowerModel() {
-            @Override
-            public double computePower(double utilization) {
-                double demand = idlePower + (maxPower - idlePower) * utilization;
-                var powerResult = energyMixedManager.supplyPower(demand);
-                return powerResult.getFirst() + powerResult.getSecond() + powerResult.getThird();
-            }
-
-            @Override
-            public String getName() {
-                return "BatteryPoweredModel";
-            }
-        };
-    }
-
     /**
      * Construct a square root {@link CpuPowerModel} that is adapted from CloudSim.
      *

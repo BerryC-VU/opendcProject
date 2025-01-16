@@ -51,6 +51,8 @@ public class PowerSourceTableReaderImpl(
         _powerDraw = table.powerDraw
         _energyUsage = table.energyUsage
         _carbonIntensity = table.carbonIntensity
+        _cleanEnergyCarbonIntensity = table.cleanEnergyCarbonIntensity
+        _nonCleanEnergyCarbonIntensity = table.nonCleanEnergyCarbonIntensity
         _carbonEmission = table.carbonEmission
         _cleanEnergyUsage = table.cleanEnergyUsage
         _nonCleanEnergyUsage = table.nonCleanEnergyUsage
@@ -83,6 +85,14 @@ public class PowerSourceTableReaderImpl(
     override val carbonIntensity: Double
         get() = _carbonIntensity
     private var _carbonIntensity = 0.0
+
+    override val cleanEnergyCarbonIntensity: Double
+        get() = _cleanEnergyCarbonIntensity
+    private var _cleanEnergyCarbonIntensity = 0.0
+
+    override val nonCleanEnergyCarbonIntensity: Double
+        get() = _nonCleanEnergyCarbonIntensity
+    private var _nonCleanEnergyCarbonIntensity = 0.0
 
     override val carbonEmission: Double
         get() = _carbonEmission - previousCarbonEmission
@@ -132,6 +142,8 @@ public class PowerSourceTableReaderImpl(
         _powerDraw = powerSource.powerDraw
         _energyUsage = powerSource.energyUsage
         _carbonIntensity = powerSource.carbonIntensity
+        _cleanEnergyCarbonIntensity = powerSource.cleanEnergyCarbonIntensity
+        _nonCleanEnergyCarbonIntensity = powerSource.nonCleanEnergyCarbonIntensity
         _carbonEmission = powerSource.carbonEmission
         _cleanEnergyUsage = powerSource.totalCleanEnergyUsage
         _nonCleanEnergyUsage = powerSource.totalNonCleanEnergyUsage
@@ -156,6 +168,8 @@ public class PowerSourceTableReaderImpl(
         _powerDraw = 0.0
         _energyUsage = 0.0
         _carbonIntensity = 0.0
+        _cleanEnergyCarbonIntensity = 0.0
+        _nonCleanEnergyCarbonIntensity = 0.0
         _carbonEmission = 0.0
         _cleanEnergyUsage = 0.0
         _nonCleanEnergyUsage = 0.0
